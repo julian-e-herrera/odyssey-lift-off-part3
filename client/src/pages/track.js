@@ -1,0 +1,51 @@
+import React from "react";
+import { useQuery, gql } from "@apollo/client";
+import { Layout, QueryResult } from "../components";
+import TrackDetail from "../components/track-detail";
+
+/** TRACK gql query to retreive a track */
+const GET_TRACK = gql`
+  query GetTrack($trackId: ID!) {
+    track(id: $trackId) {
+      id
+      title
+      author {
+        id
+        name
+        photo
+      }
+      thumbnail
+      length
+      modulesCount
+      description
+      numberOfViews
+      modules {
+        id
+        title
+        length
+      }
+    }
+  }
+`;
+
+/**
+ * Track Page is the Catstronauts page.
+ * We display a  track fetched with useQuery with the GET_TRACK query
+ */
+const Track = ({ trackId }) => {
+  const { loading, error, data } = useQuery(GET_TRACK, {
+    variables: {
+      trackId,
+    },
+  });
+
+  return (
+    <Layout>
+      <QueryResult error={error} loading={loading} data={data}>
+        <TrackDetail track={data?.track} />
+      </QueryResult>
+    </Layout>
+  );
+};
+
+export default Track;
